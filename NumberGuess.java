@@ -1,23 +1,44 @@
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+
 public class NumberGuess {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws FileNotFoundException {
+		
+		int numOfElements =7;
+		String fileName ="binaryNumbers.txt";
+		boolean reRun= true;
+		int[] test = new int[] { 1, 1, 1,0,1,1,1 };
+		
 
-		int[][] trainingSetInput = new int[][] { 
-				{ 0, 0, 0 },
-				// {0,0,1},
-				{ 0, 1, 0 }, 
-				{ 0, 1, 1 }, 
-				{ 1, 0, 0 }, 
-				{ 1, 0, 1 },
-				// {1,1,0},
-				{ 1, 1, 1 }, };
-
-		int[] trainingSetOutput = new int[] { 0, 0, 0, 1, 1, 1 };
-
-		double[] weights = new double[3];
+		BinaryNumberGenerator bng = new BinaryNumberGenerator();
+		
+		if(reRun) {
+		bng.NumGen(numOfElements, fileName);
+		}
+		
+		File file = new File(fileName);
+		Scanner sc = new Scanner(file);
+		
+		int[][] trainingSetInput = new int[(int)Math.pow(2, numOfElements)][numOfElements];
+		int[] trainingSetOutput = new int[(int)Math.pow(2, numOfElements)];
+		
+		//Write in test data to array----------------------------------------------
+		for(int i =0;i<(int)Math.pow(2, numOfElements);i++) {
+			
+			for(int j =0; j<numOfElements;j++) {
+				trainingSetInput[i][j]= sc.nextInt();
+			}
+			trainingSetOutput[i]= sc.nextInt();
+		}
+		
+			
+		
+		double[] weights = new double[numOfElements];
 
 		// assign random weights
-		for (int i = 0; i < 3; i++) {
+		for (int i = 0; i < numOfElements; i++) {
 			weights[i] = Math.random();
 			System.out.printf("Initial Weight #%d: %f\n", i, weights[i]);
 		}
@@ -33,13 +54,22 @@ public class NumberGuess {
 
 		} // end main loop
 
-		System.out.println("Weight #1: " + weights[0]);
-		System.out.println("Weight #2: " + weights[1]);
-		System.out.println("Weight #3: " + weights[2]);
 
-		// test 1 1 0 or 0 0 1
-		int[] test = new int[] { 0, 0, 1 };
-		System.out.println("Output for [0 0 1] : " + sum(test, weights));
+		for(int i =0; i<numOfElements;i++) {
+			System.out.printf("Weight #%d: %f\n",i+1,weights[i]);
+		}
+		
+		double result = sum(test, weights);
+		
+		System.out.printf("Output for %s : %f\n",test.toString(),result);
+		
+		if(result > 0.5)
+		{
+			System.out.println("The output is 1");
+		}else {
+			System.out.println("The output is 0");
+		}
+		sc.close();
 
 	}
 
